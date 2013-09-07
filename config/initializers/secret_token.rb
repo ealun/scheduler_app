@@ -9,4 +9,21 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-SchedulerApp::Application.config.secret_key_base = '41ec84a138b8c085f45048c30dbe610a61ed84bb46650d05c91b4cef34ab6cb0ce45bbdebe860e9634b50f4e7d6635b503b533b8a8c68f03d7a1b3120b82710d'
+# SchedulerApp::Application.config.secret_key_base = '41ec84a138b8c085f45048c30dbe610a61ed84bb46650d05c91b4cef34ab6cb0ce45bbdebe860e9634b50f4e7d6635b503b533b8a8c68f03d7a1b3120b82710d'
+
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    #Use the existing token.
+    File.read(token_file).chomp
+  else
+    #generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+SampleApp::Application.config.secret_key_base = secure_token
